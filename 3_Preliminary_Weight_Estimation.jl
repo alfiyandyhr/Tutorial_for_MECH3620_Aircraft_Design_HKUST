@@ -26,46 +26,57 @@ end
 md"""
 # Preliminary Weight Estimation
 
-![]
-(https://raw.githubusercontent.com/HKUST-OCTAD-LAB/MECH3620Materials/main/pics/XDSMWeightEstimation.svg)
+![](https://raw.githubusercontent.com/alfiyandyhr/Tutorial_for_MECH3620_Aircraft_Design_HKUST/main/figures/iterative_takeoff_weight_estimation.png)
+
+"""
+
+# ╔═╡ b0d766cc-7cf0-495a-a3f9-9c97c9fa6af9
+html"""
+<img src="https://raw.githubusercontent.com/alfiyandyhr/Tutorial_for_MECH3620_Aircraft_Design_HKUST/main/figures/XDSM/WeightEstimationXDSM.svg" width="100%">
 """
 
 # ╔═╡ 7915c630-fbf1-4bee-8728-5fdeec03acda
 md"""
 ## Problem Specification
 
-_Reference_: Raymer, Daniel P., Aircraft Design: A Conceptual Approach, Fourth Edition, Chapter 3.
+Anti-submarine warfare aircraft specifications:
+* Crew: $4$ passengers, $200$ lb each
+* Payload: radar equipment, $10,000$ lb
+* Cruise condition: $M = 0.6$ at $35,000$ ft
+* Maximum lift-to-drag ratio: $(L/D)_\max = 16$
 
-Consider the design of an aircraft similar to a Lockheed S-3 Viking.
+Suppose we will consider the design of an aircraft similar to a Lockheed S-3 Viking.
 
 ![](https://upload.wikimedia.org/wikipedia/commons/a/af/S-3A_%28cropped%29.jpg)
 
-Anti-submarine warfare aircraft specifications:
-* Crew: $4$ passengers, $70$ kgs + $20$ kgs baggage each
-* Payload: Radar equipment, $4500$ kgs
-* Cruise condition: $M = 0.6$ at $35,000$ ft
-* Maximum lift-to-drag ratio: $(L/D)_\max = 16$
+_Reference_: Raymer, Daniel P., Aircraft Design: A Conceptual Approach, Fifth Edition, Chapter 3.
 
 """
 
 # ╔═╡ 82bd4967-153d-4c95-99a2-7c3dcfa8a5f2
 begin
-	g 			= 9.81 		# Gravitational acceleration constant
-	W_payload 	= 4500g 	# Payload weight in kg
-	W_crew 		= 360g 		# Crew weight in kg
+	W_payload 	= 10000.0  	# Payload weight in lb
+	W_crew 		= 4*200.0 	# Crew weight in lb
 	M 			= 0.6 		# Cruise speed in Mach
 	LD_max 		= 16. 		# Maximum L/D ratio
 end;
 
 # ╔═╡ 4232909a-eef5-4db8-81a9-ea35b1751019
 md"""
-## Maximum Takeoff Weight
-![](https://raw.githubusercontent.com/HKUST-OCTAD-LAB/MECH3620Materials/main/pics/XDSMTakeoff.svg)
+## Takeoff Weight Estimation
+"""
 
+# ╔═╡ 74194f3b-cce3-41a2-9c68-752a8e2907a9
+html"""
+<img src="https://raw.githubusercontent.com/alfiyandyhr/Tutorial_for_MECH3620_Aircraft_Design_HKUST/main/figures/XDSM/TakeoffWeightXDSM.svg" width="100%">
+"""
+
+# ╔═╡ 8bc3787a-0671-4b3e-a3e6-277263c9181b
+md"""
 The 'governing equation' of this problem is:
 
 ```math
-W_0 = \frac{W_\text{payload} + W_\text{crew}}{1 - \displaystyle\frac{W_f}{W_0} - \displaystyle\frac{W_e}{W_0}}
+W_\text{TO} = \frac{W_\text{payload} + W_\text{crew}}{1 - \displaystyle\frac{W_\text{f}}{W_\text{TO}} - \displaystyle\frac{W_\text{e}}{W_\text{TO}}}
 ```
 
 
@@ -74,47 +85,62 @@ So we need to compute the maximum takeoff weight given payload weight, crew weig
 """
 
 # ╔═╡ d5710498-2f50-4663-8a5d-4badca0959c2
-function maximum_takeoff_weight(W_payload, W_crew, Wf_W0, We_W0)
-	W0 = (W_payload + W_crew) / (1 - Wf_W0 - We_W0)
-	return W0
+function maximum_takeoff_weight(W_payload, W_crew, Wf_WTO, We_WTO)
+	WTO = (W_payload + W_crew) / (1 - Wf_WTO - We_WTO)
+	return WTO
 end
 
 # ╔═╡ f8505334-0976-4c7d-98b8-698b9804da99
 # Example computation
 maximum_takeoff_weight(
-	5000, # Payload weight, kg
-	500,  # Crew weight, kg
+	10000.0, # Payload weight, kg
+	800.0,  # Crew weight, kg
 	0.1,  # Fuel-weight fraction
 	0.6   # Empty-weight fraction
 )
 
 # ╔═╡ 8551adf3-6487-44b6-9cc8-f7aacfe67eee
 md"""
-## Mission Fuel Fractions
-![](https://raw.githubusercontent.com/HKUST-OCTAD-LAB/MECH3620Materials/main/pics/XDSMMission.svg)
+## Mission Segment Weight Fractions
+"""
+
+# ╔═╡ 38abb573-46d6-4c54-b092-b72e4430f3ee
+html"""
+<img src="https://raw.githubusercontent.com/alfiyandyhr/Tutorial_for_MECH3620_Aircraft_Design_HKUST/main/figures/XDSM/MissionSegmentWeightXDSM.svg" width="100%">
 """
 
 # ╔═╡ ae4d63c8-9285-4b15-9978-64547c7aed65
 md"""
 We consider a mission consisting of 7 segments in the following order:
 
-1. Takeoff
+1. Warmup and takeoff
 2. Climb
-3. Cruise: $2000$ nautical miles (nmi) 
-4. Loiter: $2$ hrs
-5. Cruise: $1500$ nmi
-6. Loiter: $30$ mins
+3. Cruise_1: $1500$ nautical miles (nmi) 
+4. Loiter_1: $3$ hrs
+5. Cruise_2: $1500$ nmi
+6. Loiter_2: $20$ mins
 7. Landing
+
+![](https://raw.githubusercontent.com/alfiyandyhr/Tutorial_for_MECH3620_Aircraft_Design_HKUST/main/figures/sample_mission_profile.png)
+"""
+
+# ╔═╡ 2bdbaba7-39bc-4ca0-a090-4d9176cf9a62
+md"Let's use the historical mission segment weight fractions as given in Raymer's textbook.
+"
+
+# ╔═╡ 5e184816-d1a2-47f3-9b8d-5a8c6307a0f3
+html"""
+<center><img src="https://raw.githubusercontent.com/alfiyandyhr/Tutorial_for_MECH3620_Aircraft_Design_HKUST/main/figures/historical_mission_segment_weight_fractions.png" width="60%" >
 """
 
 # ╔═╡ 91bcb310-8438-48eb-972d-e1e4cb27c8bc
-md"### Takeoff
+md"### Warmup and takeoff
 
 $\left(\frac{W_1}{W_0}\right)_\text{takeoff} = 0.97$
 "
 
 # ╔═╡ d72b775b-f464-4a10-839d-af6c0bfa0348
-takeoffFF = 0.97;
+takeoffWF = 0.97;
 
 # ╔═╡ 4356c491-6fac-4a51-9830-22ffef3a6aea
 md"### Climb
@@ -122,7 +148,7 @@ $\left(\frac{W_2}{W_1}\right)_\text{climb} = 0.985$
 "
 
 # ╔═╡ 61650532-a8ee-4b84-847d-83b2f97095a0
-climbFF = 0.985;
+climbWF = 0.985;
 
 # ╔═╡ 9c858137-4c28-47d0-8cd3-1566c81eee7f
 md"### Cruise
@@ -136,24 +162,33 @@ $$\left(\frac{W_3}{W_2}\right)_\text{cruise} = \exp\left(-\frac{R_1 \times SFC}{
 
 # ╔═╡ e0a0b9e0-f60c-40c4-b1af-17258af2de77
 function cruise_weight_fraction(R, SFC, V, L_D)
-	cruiseFF = exp(-R * SFC / (V * L_D))
-	return cruiseFF
+	cruiseWF = exp(-R * SFC / (V * L_D))
+	return cruiseWF
 end;
 
 # ╔═╡ 82504448-5dc7-4121-aff2-58df81df9469
-md"For a jet aircraft at cruise altitude, we consider $SFC = 0.5$ 1/hr, and $(L/D)_\text{cruise} = 0.866 \times (L/D)_\max$."
+md"For a jet aircraft at cruise altitude, we consider $SFC = 0.5$ /hr (which is the best $SFC$ for subsonic aircraft, obtained from using high-bypass turbofan), and $(L/D)_\text{cruise} = 0.866 \times (L/D)_\max$.
+"
+
+# ╔═╡ d543c42d-1eb7-4b98-b50e-896d0dcd8b0f
+html"""
+<center><img src="https://raw.githubusercontent.com/alfiyandyhr/Tutorial_for_MECH3620_Aircraft_Design_HKUST/main/figures/typical_SFC.png" width="80%" >
+
+<center><img src="https://raw.githubusercontent.com/alfiyandyhr/Tutorial_for_MECH3620_Aircraft_Design_HKUST/main/figures/L_by_D_table.png" width="50%">
+"""
 
 # ╔═╡ 642b9276-33d2-4072-aa58-518d26b1664a
 begin
-	# At 35000 ft, speed of sound ≈ 303.2 m/s
-	V = M * 303.2       		# Cruise speed in m/s
+	# At 35000 ft, speed of sound ≈ 994.8 ft/s
+	# 1 nmi ≈ 6076 ft
+	V = M * 994.8       		# Cruise speed in ft/s
 	cruise_SFC = 0.5/3600 		# TSFC at cruise in 1/secs
-	R1 = 1500 * 1852   			# Range of cruise segment 1
+	R1 = 1500 * 6076   			# Range of cruise segment 1 in ft
 	LD_cruise = LD_max * 0.866  # L/D ratio at cruise
 end;
 
 # ╔═╡ ac9e6a70-b4db-4ce9-bc86-26a0438185d7
-cruise1FF = cruise_weight_fraction(R1, cruise_SFC, V, LD_cruise)
+cruise1WF = cruise_weight_fraction(R1, cruise_SFC, V, LD_cruise)
 
 # ╔═╡ 74d01961-0a6a-4d35-866f-3473fea20840
 md"### Loiter
@@ -164,42 +199,42 @@ $$\left(\frac{W_4}{W_3}\right)_\text{loiter} = \exp\left(-\frac{E_1 \times SFC}{
 
 # ╔═╡ b8812a7c-f4f0-497f-aa64-1ad947f43e69
 function loiter_weight_fraction(E, SFC, L_D)
-	loiterFF = exp(- E * SFC / L_D)
-	return loiterFF
+	loiterWF = exp(- E * SFC / L_D)
+	return loiterWF
 end;
 
 # ╔═╡ 4054b18d-64ba-485c-82b1-9eb3443ce8c0
 begin
-	E1 = 2 * 3600 		  # Endurance time, secs
+	E1 = 3 * 3600 		  # Endurance time, secs
 	loiter_SFC = 0.4/3600 # Specific fuel consumption, 1 / secs
 end;
 
 # ╔═╡ 1cf0fac8-6556-4736-91d6-2be9a5c67a27
-loiter1FF = loiter_weight_fraction(E1, loiter_SFC, LD_max)
+loiter1WF = loiter_weight_fraction(E1, loiter_SFC, LD_max)
 
 # ╔═╡ 401568d6-b4a1-4275-8382-3ec03fa3a981
-md"### Cruise Segment 2
+md"### Cruise 2
 
 $$\left(\frac{W_5}{W_4}\right)_\text{cruise} = \exp\left(-\frac{R_2 \times SFC}{V \times (L/D)_\text{cruise}}\right)$$
 "
 
 # ╔═╡ 330af40e-04c2-4f99-a0c4-5814e74ef4ff
-R2 = 1500 * 1852;
+R2 = 1500 * 6076; # in ft (1 nmi ≈ 6076 ft)
 
 # ╔═╡ 552332e2-7cee-41e5-8730-8fb12872cb22
-cruise2FF = cruise_weight_fraction(R2, cruise_SFC, V, LD_cruise)
+cruise2WF = cruise_weight_fraction(R2, cruise_SFC, V, LD_cruise)
 
 # ╔═╡ 809ee2fb-2a4a-4935-ac6d-33744f2d9c79
-md"### Loiter Segment 2
+md"### Loiter 2
 
 $$\left(\frac{W_6}{W_5}\right)_\text{loiter} = \exp\left(-\frac{E_2 \times SFC}{(L/D)_\max}\right)$$
 "
 
 # ╔═╡ 908a45a4-03cf-43fb-88a2-28299e8ee786
-E2 = 1/2 * 3600; # Endurance of second segment, secs
+E2 = 1/3 * 3600; # Endurance of second segment, secs
 
 # ╔═╡ d929f9b0-b340-4145-b9e2-87f6ada614d1
-loiter2FF = loiter_weight_fraction(E2, loiter_SFC, LD_max)
+loiter2WF = loiter_weight_fraction(E2, loiter_SFC, LD_max)
 
 # ╔═╡ 44639a99-983d-41c9-b7e0-a4a5886bb891
 md"### Landing
@@ -207,102 +242,106 @@ md"### Landing
 $\left(\frac{W_7}{W_6}\right)_\text{landing} = 0.995$"
 
 # ╔═╡ f5b749a2-23cd-4d41-b1f2-0d3a4856bb5c
-landingFF = 0.995;
+landingWF = 0.995;
+
+# ╔═╡ 18a12ada-b884-49cf-909f-e98fe2aeb883
+md"
+### Summary
+"
+
+# ╔═╡ 93c58936-6063-45f0-bbf3-04571176b930
+WFs = [takeoffWF, climbWF, cruise1WF, loiter1WF, cruise2WF, loiter2WF, landingWF]
 
 # ╔═╡ 14edd542-98d8-4b45-b13c-1d84765e233a
 md"""## Fuel Weight Fractions
-![](https://raw.githubusercontent.com/HKUST-OCTAD-LAB/MECH3620Materials/main/pics/XDSMFuel.svg)
-
-The fuel weight fraction is given by:
-```math
-W_{f_0} \equiv \frac{W_f}{W_0} = a\left(1 - \prod_{i = 1}^{N}\frac{W_{f_i}}{W_{f_{i-1}}}\right)
-```
-where the input $a$ is the additional fuel reserve (usually as a percentage of the total).
-
 """
 
-# ╔═╡ 4cce6a04-318a-46d9-8386-d7025263512a
-md"One way to evaluate this is to manually evaluate the product of the weight fractions and the expression as follows."
+# ╔═╡ 6a6faced-3793-4053-bfd3-e5e19d3c1dca
+html"""
+<img src="https://raw.githubusercontent.com/alfiyandyhr/Tutorial_for_MECH3620_Aircraft_Design_HKUST/main/figures/XDSM/FuelWeightXDSM.svg" width="100%">
+"""
 
-# ╔═╡ 6fc5dede-0ebf-491e-9d15-9fa1307f9e4c
-Wf_manual = 1.06 * (1 - takeoffFF * climbFF * cruise1FF * loiter1FF * cruise2FF * loiter2FF * landingFF)
-
-# ╔═╡ 9117d9ef-c10e-432a-9438-f86af109668c
-md"""More ideally, we'd like a function to take an array of fuel fractions ``\{\ W_{f_i}/W_{f_{i-1}} \mid i \in \{\ 1, \ldots, N \ \}\ \}`` and compute the expression above."""
+# ╔═╡ 2b9fe065-1fd7-46b4-84b2-d300ce09fdaa
+md"""
+The fuel weight fraction is given by:
+```math
+W_{\text{f}_0} \equiv \frac{W_\text{f}}{W_\text{TO}} = a\left(1 - \prod_{i = 1}^{N}\frac{W_{\text{f}_i}}{W_{\text{f}_{i-1}}}\right)
+```
+where the input $a$ is the reserve and trapped fuel (usually as a percentage of the total).
+"""
 
 # ╔═╡ 755cd536-e19f-4290-be51-e4d024a081d2
-function fuel_weight_fraction(fuel_fracs, a)
-	Wf_W0 = a * (1 - prod(fuel_fracs))
-	return Wf_W0
+function fuel_weight_fraction(segment_weight_fracs, a)
+	Wf_WTO = a * (1 - prod(segment_weight_fracs))
+	return Wf_WTO
 end
 
-# ╔═╡ 26507983-66d3-40d0-9f84-01174817e21c
-FFs = [takeoffFF, climbFF, cruise1FF, loiter1FF, cruise2FF, loiter2FF, landingFF]
-
 # ╔═╡ f7781783-5374-47d2-901e-074417e91541
-a = 1.06 # Additional reserve fuel (6%)
+a = 1.06 # Reserve and trapped fuel (6%)
 
 # ╔═╡ f59f969b-2d87-4c4c-ae86-762f5bf1c842
-Wf_W0 = fuel_weight_fraction(FFs, a) # Estimated fuel-weight fraction
-
-# ╔═╡ 404a5a3f-9079-4a36-81bd-f458411a98be
-cumprod(FFs)
-
-# ╔═╡ 33aa4d83-73b5-4072-834a-13357fb52d44
-plot( # You can ignore this for now. Alternatively, use Live Docs to understand the functions used.
-	eachindex(FFs), # Mission segment numbers
-	cumprod(FFs), # Cumulative fuel fractions
-	xlabel = "Mission Segment Number", 
-	ylabel = "Fuel Fraction", 
-	label = ""
-)
+Wf_WTO = fuel_weight_fraction(WFs, a) # Estimated fuel-weight fraction
 
 # ╔═╡ f5140ee4-7ba9-4fdd-9a14-2b215d091cf6
 md"""## Empty Weight Fraction
-![](https://raw.githubusercontent.com/HKUST-OCTAD-LAB/MECH3620Materials/main/pics/XDSMEmpty.svg)
+"""
+
+# ╔═╡ f3a7682d-54f9-4768-8d15-1199c53bc00f
+html"""
+<img src="https://raw.githubusercontent.com/alfiyandyhr/Tutorial_for_MECH3620_Aircraft_Design_HKUST/main/figures/XDSM/EmptyWeightXDSM.svg" width="100%">
 """
 
 # ╔═╡ 56553c22-2abf-469a-b0b4-aeaf59c31dc6
-md"""Compute the empty-weight ratio ``W_e/W_0`` for an aircraft given the maximum takeoff weight ``W_0`` (in Newtons) and regression coefficients ``A`` and ``B``.
+md"""Compute the empty-weight ratio ``W_\text{e}/W_\text{TO}`` for an aircraft given the maximum takeoff weight ``W_\text{TO}`` (in lb) and regression coefficients ``A`` and ``B``.
 
 The following regression formula is used from Raymer:
 
 ```math
-\frac{W_e}{W_0} \equiv W_{EF}(W_0) = A W_0^B
+\frac{W_\text{e}}{W_\text{TO}} \equiv W_{\text{EF}}(W_\text{TO}) = A W_\text{TO}^B
 ```
 """
 
+# ╔═╡ 4c688c33-bba2-4bea-8cb1-e7f5209f465e
+html"""
+<center><img src="https://raw.githubusercontent.com/alfiyandyhr/Tutorial_for_MECH3620_Aircraft_Design_HKUST/main/figures/historical_empty_weight_graph.png" width="80%">
+"""
+
+# ╔═╡ 5a555d98-18b7-4c51-8bc2-06896c0292b8
+html"""
+<center><img src="https://raw.githubusercontent.com/alfiyandyhr/Tutorial_for_MECH3620_Aircraft_Design_HKUST/main/figures/historical_empty_weight_table.png" width="80%">
+"""
+
 # ╔═╡ ee7c7f0c-d9b9-42a4-9307-3834c738dbeb
-function empty_weight_raymer(W0, A, B)
-	We_W0 = A * W0^B
-	return We_W0
+function empty_weight_raymer(WTO, A, B)
+	We_WTO = A * WTO^B
+	return We_WTO
 end;
 
 # ╔═╡ d84d8493-ff2e-4b2b-b457-389d2d64e77d
 md"Regression coefficients:"
 
 # ╔═╡ 5c5f59d2-0faf-4c62-a370-6bf2ed98d6c4
-A, B = 0.88, -0.07; # Raymer's coefficients for this aircraft type
+A, B = 0.93, -0.07; # Raymer's coefficients for this aircraft type
 
 # ╔═╡ 22e2bb79-be53-4474-ad7f-b220436d4c00
-W0_random = 4800; # kg
+WTO_random = 11000; # kg
 
 # ╔═╡ 6bbc74c1-7741-41f0-89ec-877047c9e96d
-We_W0_random = empty_weight_raymer(W0_random * g, A, B)
+We_WTO_random = empty_weight_raymer(WTO_random, A, B)
 
 # ╔═╡ 8c4d140a-3228-4e10-9fb4-6e5f822c14a3
 md"For demonstration, here are the estimated empty weights for a range of guessed takeoff weights."
 
 # ╔═╡ 4fed483a-3f6c-4421-bcea-5a061a950465
-W0_range = 1000:500:10000; # kg
+WTO_range = 2000:1000:22000; # lb
 
 # ╔═╡ 29fc98d4-9ba9-4572-8847-d158c44d9b02
-We_W0_range = empty_weight_raymer.(W0_range .* g, A, B) # Broadcasting over range
+We_WTO_range = empty_weight_raymer.(WTO_range, A, B) # Broadcasting over range
 
 # ╔═╡ 07bb8a5c-ac57-45ca-8c09-83df56c78257
 plot(
-	W0_range, # x-values (Takeoff weights)
-	We_W0_range, # y-values (Empty weight ratios) 
+	WTO_range, # x-values (Takeoff weights)
+	We_WTO_range, # y-values (Empty weight ratios) 
 	xlabel = "Takeoff Weight", 
 	ylabel = "Empty Weight / Takeoff Weight", 
 	label = ""
@@ -311,63 +350,69 @@ plot(
 # ╔═╡ 7318875f-e93c-4433-924d-2be64e71d502
 md"""
 ## Iterative Estimation
-![](https://raw.githubusercontent.com/HKUST-OCTAD-LAB/MECH3620Materials/main/pics/XDSMTakeoffEmpty.svg)
+"""
+
+# ╔═╡ e5cd4840-3bd0-42f9-a11f-bdcd35333b40
+html"""
+<img src="https://raw.githubusercontent.com/alfiyandyhr/Tutorial_for_MECH3620_Aircraft_Design_HKUST/main/figures/XDSM/TakeoffEmptyWeightXDSM.svg" width="100%">
 """
 
 # ╔═╡ 79ee2e6b-66b3-449d-bcb8-40800da02610
 md"""### Fixed-Point Iteration
-We need to solve the following equation for $W_0$:
+We need to solve the following equation for $W_\text{TO}$:
 ```math
 \begin{align}
-W_0 & = \frac{W_\text{payload} + W_\text{crew}}{1 - \displaystyle\frac{W_f}{W_0} - \displaystyle\frac{W_e}{W_0}},
+W_\text{TO} & = \frac{W_\text{payload} + W_\text{crew}}{1 - \displaystyle\frac{W_\text{f}}{W_\text{TO}} - \displaystyle\frac{W_\text{e}}{W_\text{TO}}},
 \end{align}
 ```
 where
 ```math
 \begin{align}
-\text{Fuel Weight Fraction:}  &\quad  & \frac{W_f}{W_0} \equiv W_{f_0} & = a\left(1 - \prod_{i = 1}^{N}\frac{W_{f_i}}{W_{f_{i-1}}}\right), \\
-\text{Empty Weight Fraction:} &\quad & \frac{W_e}{W_0} \equiv W_{EF}(W_0) & = AW_0^B.
+\text{Fuel Weight Fraction:}  &\quad  & \frac{W_\text{f}}{W_\text{TO}} \equiv W_{\text{f}_0} & = a\left(1 - \prod_{i = 1}^{N}\frac{W_{\text{f}_i}}{W_{\text{f}_{i-1}}}\right), \\
+
+\text{Empty Weight Fraction:} &\quad & \frac{W_\text{e}}{W_\text{TO}} \equiv W_{\text{EF}}(W_\text{TO}) = AW_\text{TO}^B.
+
 \end{align}
 ```
 
 To numerically solve the equation, you can:
 
-1. Begin with a guess for $W_0$, insert it into the right-hand expression and check the computed value to get the left-hand side, a new value of $W_0$. 
-2. If you insert this new value of $W_0$ into the right-hand side again, you will get another new value for $W_0$.
+1. Begin with a guess for $W_\text{TO}$, insert it into the right-hand expression and check the computed value to get the left-hand side, a new value of $W_\text{TO}$. 
+2. If you insert this new value of $W_\text{TO}$ into the right-hand side again, you will get another new value for $W_\text{TO}$.
 3. Repeat the process for more iterations. Eventually, the value of $W_0$ should converge to a _fixed point_.
 
 
 Here, we will denote the iteration number of a variable by an additional subscript $(-)_n$:
 ```math
 \begin{align}
-\text{Takeoff Weight Iteration:} & \quad & (W_0)_n & = \frac{W_\text{payload} + W_\text{crew}}{1 - W_{f_0} - W_{EF}[(W_0)_{n-1}]}\\
-% \text{Equality:} & \quad & (W_0)_n & = (W_0)_{n-1}
+\text{Takeoff Weight Iteration:} & \quad & (W_\text{TO})_n & = \frac{W_\text{payload} + W_\text{crew}}{1 - W_{\text{f}_0} - W_\text{EF}[(W_\text{TO})_{n-1}]}\\
+% \text{Equality:} & \quad & (W_\text{TO})_n & = (W_\text{TO})_{n-1}
 \end{align}
 ```
-So, we need to evaluate the right-hand expression to obtain the value of $W_0$ for the $n^\text{th}$ iteration, and compare it to the value of $W_0$ in the $(n-1)^{\text{th}}$ iteration.
+So, we need to evaluate the right-hand expression to obtain the value of $W_\text{TO}$ for the $n^\text{th}$ iteration, and compare it to the value of $W_\text{TO}$ in the $(n-1)^{\text{th}}$ iteration.
 
 Let the following indicate the relative error for the $n$th iteration:
 ```math
-\varepsilon_n = \left|\frac{(W_0)_n - (W_0)_{n-1}}{(W_0)_{n-1}}\right|
+\varepsilon_n = \left|\frac{(W_\text{TO})_n - (W_\text{TO})_{n-1}}{(W_\text{TO})_{n-1}}\right|
 ```
 
 We would like our analysis to converge below some tolerance $\varepsilon_\text{tol}$, i.e. the error should be $\varepsilon_{n} < \varepsilon_\text{tol}$.
 """
 
 # ╔═╡ 2b7598bc-fba2-4ca2-a6b0-e37e96a7b2f8
-function compute_MTOW_via_fixed_point_iteration(
+function compute_WTO_via_fixed_point_iteration(
 		# Input arguments
-		W_0, W_payload, W_crew, Wf_W0, A, B;
+		WTO_guess, W_payload, W_crew, Wf_WTO, A, B;
 		# Default arguments
 		num_iters = 20, # number of iterations
 		tol = 1e-12 	# convergence tolerance
 	)
 
-	# Initial value of maximum takeoff weight (MTOW) from guessing
-	MTOW = W_0
+	# Initial value of takeoff weight from guessing
+	WTO = WTO_guess
 
 	# Array of MTOW iterative values
-	MTOW_list = [MTOW]
+	WTO_list = [WTO]
 
 	# Array of errors over iterations of size num_iters, initially infinite
 	error_list = [ Inf; zeros(num_iters) ]
@@ -376,16 +421,16 @@ function compute_MTOW_via_fixed_point_iteration(
 	for i in 2:num_iters
 		
 		# Calculate empty weight fraction
-		We_W0 = empty_weight_raymer(MTOW, A, B)
+		We_WTO = empty_weight_raymer(WTO, A, B)
 
 		# Calculate new MTOW with the calculated empty weight fraction
-		MTOW_new = maximum_takeoff_weight(W_payload, W_crew, Wf_W0, We_W0)
+		WTO_new = maximum_takeoff_weight(W_payload, W_crew, Wf_WTO, We_WTO)
 
 		# Evaluate relative error
-		error = abs((MTOW_new - MTOW)/MTOW)
+		error = abs((WTO_new - WTO)/WTO)
 
 		# Append MTOW_new to MTOW_list
-		push!(MTOW_list, MTOW_new)
+		push!(WTO_list, WTO_new)
 
 		# Assign error to error_list
 		error_list[i] = error
@@ -394,12 +439,12 @@ function compute_MTOW_via_fixed_point_iteration(
 		if error < tol
 			break 				# break loop
 		else
-			MTOW = MTOW_new 	# assign new value
+			WTO = WTO_new 	# assign new value
 		end
 	end
 
 	# Return arrays of MTOW and error
-	return MTOW_list, error_list[2:length(MTOW_list)]
+	return WTO_list, error_list[2:length(WTO_list)]
 end
 
 # ╔═╡ 136ad7e4-0b1a-4a73-9722-2627195a71e7
@@ -408,8 +453,8 @@ md"We need an initial guess to start the iteration process. Let's try the sum of
 # ╔═╡ 3baf8a83-11c0-434f-9d25-cc4d64b32bf6
 begin
 	max_iter = 20
-	W0_guess = W_payload + W_crew # Initial guess
-end
+	WTO_guess = W_payload + W_crew # Initial guess
+end;
 
 # ╔═╡ e626a2e3-929f-4318-b42c-4674b59f5f66
 md"The iteration is performed by calling the function with the relevant inputs. It returns the arrays of takeoff weights and convergence errors over the iterations."
@@ -432,28 +477,28 @@ begin
 end
 
 # ╔═╡ f4f2fb53-e396-4f7c-ad2a-9b168e18f528
-MTOW_list1, error_list = compute_MTOW_via_fixed_point_iteration(
-							W0_guess, W_payload, W_crew, Wf_W0, A, B;
+WTO_list1, error_list = compute_WTO_via_fixed_point_iteration(
+							WTO_guess, W_payload, W_crew, Wf_WTO, A, B;
 							num_iters = num,
 							tol = 1e-12
 						);
 
 # ╔═╡ 6b34d94f-ab70-4cd4-b2fd-c286273efb20
-MTOW_list1
+WTO_list1
 
 # ╔═╡ eb01deb2-2587-48f5-85f2-b2b1efc7d794
 error_list
 
 # ╔═╡ 0a34fdc0-6c1a-42b2-a4b7-03f39c5fa423
-MTOW_result1_kg = MTOW_list1[end] / g # kg
+WTO_result1_lb = WTO_list1[end] # in lb
 
 # ╔═╡ 42f60b8d-6c64-4701-aa76-efcaa1f2cc45
 begin
 	plot0 = plot(title="Fixed-point iteration method",
 				 grid=false, showaxis=false, bottom_margin = -140Plots.px)
-	plot1 = plot(MTOW_list1,
+	plot1 = plot(WTO_list1,
 		label = "", 
-		ylabel = "MTOW (N)", 
+		ylabel = "W_takeoff (lb)", 
 		xlabel = "Iterations"
 	)
 	plot2 = plot(error_list,
@@ -467,40 +512,38 @@ end
 
 # ╔═╡ f0d5afdd-ce75-4f19-93bf-208870fcbdb7
 md"""### Bisection Method (optional)
-
 """
 
 # ╔═╡ b9d204b8-eb92-413b-80cf-76997fd30a09
-function compute_MTOW_residual(MTOW, W_payload, W_crew, Wf_W0, A, B)
-	We_W0 = empty_weight_raymer(MTOW, A, B)
-	MTOW_calc = maximum_takeoff_weight(W_payload, W_crew, Wf_W0, We_W0)
-	residual = MTOW - MTOW_calc
+function compute_WTO_residual(WTO, W_payload, W_crew, Wf_WTO, A, B)
+	We_WTO = empty_weight_raymer(WTO, A, B)
+	WTO_calc = maximum_takeoff_weight(W_payload, W_crew, Wf_WTO, We_WTO)
+	residual = WTO - WTO_calc
 	return residual
 end
 
 # ╔═╡ ffb30ebd-b8a5-4f3e-bcc2-c2d9d4dba845
-function compute_MTOW_via_bisection_method(
+function compute_WTO_via_bisection_method(
 		f::Function, a::Number, b::Number,
 		# Input arguments
-		W_payload, W_crew, Wf_W0, A, B;
+		W_payload, W_crew, Wf_WTO, A, B;
 		# Default arguments
 		num_iters = 20, # number of iterations
 		tol = 1e-12 	# convergence tolerance
 	)
 
-	MTOW_list, residual_list = [], []
+	WTO_list, residual_list = [], []
 	
-    fa = f(a, W_payload, W_crew, Wf_W0, A, B)
-    fa*f(b, W_payload, W_crew, Wf_W0, A, B) <= 0 || error("No real root in [a,b]")
+    fa = f(a, W_payload, W_crew, Wf_WTO, A, B)
+    fa*f(b, W_payload, W_crew, Wf_WTO, A, B) <= 0 || error("No real root in [a,b]")
     i = 0
     local c
-#    while b-a > to
+
 	for i in 1:num_iters
-#        i += 1
-#        i != num_iters || error("Max iteration exceeded")
+		
         c = (a+b)/2
-        fc = f(c, W_payload, W_crew, Wf_W0, A, B)
-		push!(MTOW_list, c)
+        fc = f(c, W_payload, W_crew, Wf_WTO, A, B)
+		push!(WTO_list, c)
 		push!(residual_list, abs(fc))
 
 		# Conditional
@@ -513,14 +556,14 @@ function compute_MTOW_via_bisection_method(
             b = c  # Root is in the left half of [a,b].
         end
     end
-    return MTOW_list, residual_list
+    return WTO_list, residual_list
 end
 
 # ╔═╡ 9f65b5d9-4d1f-4c42-8613-92ded9987edb
 begin
 	max_iter_bisect = 20
-	W0_guess1 = 5500g  # Initial guess 1
-	W0_guess2 = 50000g # Initial guess 2
+	WTO_guess1 = 10800.0  # in lb, initial guess 1
+	WTO_guess2 = 100000.0 # in lb, initial guess 2
 end;
 
 # ╔═╡ aed4d675-d725-44af-a2d8-b5e9160a6214
@@ -532,20 +575,20 @@ begin
 end
 
 # ╔═╡ 04700882-1230-4012-b367-3502c11dce46
-MTOW_list2, residual_list = compute_MTOW_via_bisection_method(
-							compute_MTOW_residual, W0_guess1, W0_guess2,
-							W_payload, W_crew, Wf_W0, A, B,
+WTO_list2, residual_list = compute_WTO_via_bisection_method(
+							compute_WTO_residual, WTO_guess1, WTO_guess2,
+							W_payload, W_crew, Wf_WTO, A, B,
 							num_iters=num_iter_bisect, tol=1e-3
 );
 
 # ╔═╡ 1161a6d3-8bfa-4d38-be4d-43b2cc0a1c40
-MTOW_list2
+WTO_list2
 
 # ╔═╡ e18df7d1-1af5-4155-8bcd-04ed63f96845
 residual_list
 
 # ╔═╡ 5653b0c3-ce58-4935-89e8-cdb5f5389e87
-MTOW_result2_kg = MTOW_list2[end] / g # kg
+WTO_result2_lb = WTO_list2[end] # in lb
 
 # ╔═╡ 28e544ae-aeac-4da3-aa2f-1beda3bb04b4
 num_iter_bisect
@@ -554,9 +597,9 @@ num_iter_bisect
 begin
 	plot3 = plot(title="Bisection method",
 				 grid=false, showaxis=false, bottom_margin = -140Plots.px)
-	plot4 = plot(MTOW_list2, 
+	plot4 = plot(WTO_list2, 
 		label = "", 
-		ylabel = "MTOW (N)", 
+		ylabel = "Takeoff weight (lb)", 
 		xlabel = "Iterations"
 	)
 	plot5 = plot(residual_list,
@@ -574,15 +617,94 @@ md"""### Final results
 
 # ╔═╡ f69cb2ca-5c9e-4337-8e11-6e4cb4eef882
 md"
-MTOW calculated via **fixed-point iteration** = $MTOW_result1_kg kg
+Takeoff weight calculated via **fixed-point iteration** = $WTO_result1_lb lb
 
-MTOW calculated via **bisection method** = $MTOW_result2_kg kg
+Takeoff weight calculated via **bisection method** = $WTO_result2_lb lb
 "
 
 # ╔═╡ ae5eccd0-ceda-4be4-a83c-4943dd59c411
+# The end of main tutorial
 
+# ╔═╡ ae211c87-5c58-403d-ac75-cc97da87af38
+md"
+## Additional exercise (optional)
+"
 
 # ╔═╡ c79c43cf-ef87-41fe-b3aa-0928fc08ed2d
+md"""
+
+!!! tip "Exercise"
+	Suppose we have achieved a 5% empty-weight saving due to the use of composite materials; how much take-off weight saving would we get?
+"""
+
+# ╔═╡ dc5ad53b-f105-4f00-8756-9087aab87abf
+composite_saving = 0.05;
+
+# ╔═╡ 00fce8aa-7760-4a20-825b-f5c1b54d480b
+function compute_WTO_with_composites(
+		# Input arguments
+		WTO_guess, W_payload, W_crew, Wf_WTO, A, B, composite_saving,
+		# Default arguments
+		num_iters = 20, # number of iterations
+		tol = 1e-12 	# convergence tolerance
+	)
+
+	# Initial value of takeoff weight from guessing
+	WTO = WTO_guess
+
+	# Array of MTOW iterative values
+	WTO_list = [WTO]
+
+	# Array of errors over iterations of size num_iters, initially infinite
+	error_list = [ Inf; zeros(num_iters) ]
+
+	# Iterative loop
+	for i in 2:num_iters
+		
+		# Calculate empty weight fraction and consider composite saving
+		We_WTO = (1 - composite_saving) * empty_weight_raymer(WTO, A, B)
+
+		# Calculate new MTOW with the calculated empty weight fraction
+		WTO_new = maximum_takeoff_weight(W_payload, W_crew, Wf_WTO, We_WTO)
+
+		# Evaluate relative error
+		error = abs((WTO_new - WTO)/WTO)
+
+		# Append MTOW_new to MTOW_list
+		push!(WTO_list, WTO_new)
+
+		# Assign error to error_list
+		error_list[i] = error
+
+		# Conditional
+		if error < tol
+			break 				# break loop
+		else
+			WTO = WTO_new 	# assign new value
+		end
+	end
+
+	# Return arrays of MTOW and error
+	return WTO_list, error_list[2:length(WTO_list)]	
+
+end
+
+# ╔═╡ 46e1712d-1019-483d-8aba-8fde7f27c565
+WTO_list3, error_list3 = compute_WTO_with_composites(W_payload+W_crew, W_payload, W_crew, Wf_WTO, A, B, composite_saving);
+
+# ╔═╡ 89befc48-b2a1-4f94-83d8-7afee54498c5
+# Takeoff gross weight
+WTO_result3_lb = WTO_list3[end] # in lb
+
+# ╔═╡ a8feca0a-95df-4d11-97a6-61f2b5a79397
+total_weight_saving = (WTO_result3_lb-WTO_result1_lb)/WTO_result1_lb * 100 # %
+
+# ╔═╡ a2861049-d1a6-45df-aa4e-9ad494487827
+md"
+The total weight saving due to a **5 %** composite empty-weight saving is **$(round(total_weight_saving; digits=2))%**
+"
+
+# ╔═╡ b3af1d80-71c0-4a72-a942-d35066b87e5c
 
 
 # ╔═╡ e7632467-e079-4073-aea6-4fdeee42f32d
@@ -598,7 +720,7 @@ begin
 end
 
 # ╔═╡ 1aad12b5-1af0-4b60-8e9c-a43296f6cd29
-# The end
+# The end.
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -1776,14 +1898,20 @@ version = "1.4.1+2"
 
 # ╔═╡ Cell order:
 # ╟─1a47d504-da67-11ef-1188-7b0242ee46fb
+# ╟─b0d766cc-7cf0-495a-a3f9-9c97c9fa6af9
 # ╠═981ca2b5-f92f-4410-b80c-e8ccabd008d5
 # ╟─7915c630-fbf1-4bee-8728-5fdeec03acda
 # ╠═82bd4967-153d-4c95-99a2-7c3dcfa8a5f2
 # ╟─4232909a-eef5-4db8-81a9-ea35b1751019
+# ╟─74194f3b-cce3-41a2-9c68-752a8e2907a9
+# ╟─8bc3787a-0671-4b3e-a3e6-277263c9181b
 # ╠═d5710498-2f50-4663-8a5d-4badca0959c2
 # ╠═f8505334-0976-4c7d-98b8-698b9804da99
 # ╟─8551adf3-6487-44b6-9cc8-f7aacfe67eee
+# ╟─38abb573-46d6-4c54-b092-b72e4430f3ee
 # ╟─ae4d63c8-9285-4b15-9978-64547c7aed65
+# ╟─2bdbaba7-39bc-4ca0-a090-4d9176cf9a62
+# ╟─5e184816-d1a2-47f3-9b8d-5a8c6307a0f3
 # ╟─91bcb310-8438-48eb-972d-e1e4cb27c8bc
 # ╠═d72b775b-f464-4a10-839d-af6c0bfa0348
 # ╟─4356c491-6fac-4a51-9830-22ffef3a6aea
@@ -1791,6 +1919,7 @@ version = "1.4.1+2"
 # ╟─9c858137-4c28-47d0-8cd3-1566c81eee7f
 # ╠═e0a0b9e0-f60c-40c4-b1af-17258af2de77
 # ╟─82504448-5dc7-4121-aff2-58df81df9469
+# ╟─d543c42d-1eb7-4b98-b50e-896d0dcd8b0f
 # ╠═642b9276-33d2-4072-aa58-518d26b1664a
 # ╠═ac9e6a70-b4db-4ce9-bc86-26a0438185d7
 # ╟─74d01961-0a6a-4d35-866f-3473fea20840
@@ -1805,18 +1934,19 @@ version = "1.4.1+2"
 # ╠═d929f9b0-b340-4145-b9e2-87f6ada614d1
 # ╟─44639a99-983d-41c9-b7e0-a4a5886bb891
 # ╠═f5b749a2-23cd-4d41-b1f2-0d3a4856bb5c
+# ╟─18a12ada-b884-49cf-909f-e98fe2aeb883
+# ╠═93c58936-6063-45f0-bbf3-04571176b930
 # ╟─14edd542-98d8-4b45-b13c-1d84765e233a
-# ╟─4cce6a04-318a-46d9-8386-d7025263512a
-# ╠═6fc5dede-0ebf-491e-9d15-9fa1307f9e4c
-# ╟─9117d9ef-c10e-432a-9438-f86af109668c
+# ╟─6a6faced-3793-4053-bfd3-e5e19d3c1dca
+# ╟─2b9fe065-1fd7-46b4-84b2-d300ce09fdaa
 # ╠═755cd536-e19f-4290-be51-e4d024a081d2
-# ╠═26507983-66d3-40d0-9f84-01174817e21c
 # ╠═f7781783-5374-47d2-901e-074417e91541
 # ╠═f59f969b-2d87-4c4c-ae86-762f5bf1c842
-# ╠═404a5a3f-9079-4a36-81bd-f458411a98be
-# ╠═33aa4d83-73b5-4072-834a-13357fb52d44
 # ╟─f5140ee4-7ba9-4fdd-9a14-2b215d091cf6
+# ╟─f3a7682d-54f9-4768-8d15-1199c53bc00f
 # ╟─56553c22-2abf-469a-b0b4-aeaf59c31dc6
+# ╟─4c688c33-bba2-4bea-8cb1-e7f5209f465e
+# ╟─5a555d98-18b7-4c51-8bc2-06896c0292b8
 # ╠═ee7c7f0c-d9b9-42a4-9307-3834c738dbeb
 # ╟─d84d8493-ff2e-4b2b-b457-389d2d64e77d
 # ╠═5c5f59d2-0faf-4c62-a370-6bf2ed98d6c4
@@ -1827,6 +1957,7 @@ version = "1.4.1+2"
 # ╠═29fc98d4-9ba9-4572-8847-d158c44d9b02
 # ╠═07bb8a5c-ac57-45ca-8c09-83df56c78257
 # ╟─7318875f-e93c-4433-924d-2be64e71d502
+# ╟─e5cd4840-3bd0-42f9-a11f-bdcd35333b40
 # ╟─79ee2e6b-66b3-449d-bcb8-40800da02610
 # ╠═2b7598bc-fba2-4ca2-a6b0-e37e96a7b2f8
 # ╟─136ad7e4-0b1a-4a73-9722-2627195a71e7
@@ -1840,7 +1971,7 @@ version = "1.4.1+2"
 # ╠═0a34fdc0-6c1a-42b2-a4b7-03f39c5fa423
 # ╟─ac421b6c-58a8-4225-8e19-3c6e8568ef66
 # ╟─3fca957b-e017-4ab7-934e-71f9a65759af
-# ╠═42f60b8d-6c64-4701-aa76-efcaa1f2cc45
+# ╟─42f60b8d-6c64-4701-aa76-efcaa1f2cc45
 # ╟─f0d5afdd-ce75-4f19-93bf-208870fcbdb7
 # ╠═b9d204b8-eb92-413b-80cf-76997fd30a09
 # ╠═ffb30ebd-b8a5-4f3e-bcc2-c2d9d4dba845
@@ -1855,7 +1986,15 @@ version = "1.4.1+2"
 # ╟─bad2dbd9-5bfa-4d8a-a33c-7ff73718923e
 # ╟─f69cb2ca-5c9e-4337-8e11-6e4cb4eef882
 # ╠═ae5eccd0-ceda-4be4-a83c-4943dd59c411
-# ╠═c79c43cf-ef87-41fe-b3aa-0928fc08ed2d
+# ╟─ae211c87-5c58-403d-ac75-cc97da87af38
+# ╟─c79c43cf-ef87-41fe-b3aa-0928fc08ed2d
+# ╠═dc5ad53b-f105-4f00-8756-9087aab87abf
+# ╠═00fce8aa-7760-4a20-825b-f5c1b54d480b
+# ╠═46e1712d-1019-483d-8aba-8fde7f27c565
+# ╠═89befc48-b2a1-4f94-83d8-7afee54498c5
+# ╠═a8feca0a-95df-4d11-97a6-61f2b5a79397
+# ╟─a2861049-d1a6-45df-aa4e-9ad494487827
+# ╠═b3af1d80-71c0-4a72-a942-d35066b87e5c
 # ╟─e7632467-e079-4073-aea6-4fdeee42f32d
 # ╠═1aad12b5-1af0-4b60-8e9c-a43296f6cd29
 # ╟─00000000-0000-0000-0000-000000000001
