@@ -702,6 +702,8 @@ total_weight_saving = (WTO_result3_lb-WTO_result1_lb)/WTO_result1_lb * 100 # %
 # ╔═╡ a2861049-d1a6-45df-aa4e-9ad494487827
 md"
 The total weight saving due to a **5 %** composite empty-weight saving is **$(round(total_weight_saving; digits=2))%**
+
+This is the leverage that we can exploit in the sizing equation.
 "
 
 # ╔═╡ b3af1d80-71c0-4a72-a942-d35066b87e5c
