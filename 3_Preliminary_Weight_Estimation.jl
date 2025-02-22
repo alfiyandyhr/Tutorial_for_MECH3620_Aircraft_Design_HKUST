@@ -622,6 +622,18 @@ Takeoff weight calculated via **fixed-point iteration** = $WTO_result1_lb lb
 Takeoff weight calculated via **bisection method** = $WTO_result2_lb lb
 "
 
+# ╔═╡ 4b6dfe00-5b96-459c-b591-1d7ab948a53c
+# Empty Weight (in lb)
+W_empty = empty_weight_raymer(WTO_result1_lb, A, B) * WTO_result1_lb
+
+# ╔═╡ 9b17d4f5-40c3-4f9f-b3ae-9e0b01aa0d50
+# Fuel Weight (in lb)
+W_fuel = Wf_WTO * WTO_result1_lb
+
+# ╔═╡ c77256b0-4ca7-4aff-8718-0778f33702f6
+# Residual weight (in lb)
+W_residual = WTO_result1_lb - (W_empty + W_fuel + W_payload + W_crew)
+
 # ╔═╡ ae5eccd0-ceda-4be4-a83c-4943dd59c411
 # The end of main tutorial
 
@@ -702,8 +714,6 @@ total_weight_saving = (WTO_result3_lb-WTO_result1_lb)/WTO_result1_lb * 100 # %
 # ╔═╡ a2861049-d1a6-45df-aa4e-9ad494487827
 md"
 The total weight saving due to a **5 %** composite empty-weight saving is **$(round(total_weight_saving; digits=2))%**
-
-This is the leverage that we can exploit in the sizing equation.
 "
 
 # ╔═╡ b3af1d80-71c0-4a72-a942-d35066b87e5c
@@ -1987,6 +1997,9 @@ version = "1.4.1+2"
 # ╠═39056ece-e86f-4637-a2bb-5c81aa043261
 # ╟─bad2dbd9-5bfa-4d8a-a33c-7ff73718923e
 # ╟─f69cb2ca-5c9e-4337-8e11-6e4cb4eef882
+# ╠═4b6dfe00-5b96-459c-b591-1d7ab948a53c
+# ╠═9b17d4f5-40c3-4f9f-b3ae-9e0b01aa0d50
+# ╠═c77256b0-4ca7-4aff-8718-0778f33702f6
 # ╠═ae5eccd0-ceda-4be4-a83c-4943dd59c411
 # ╟─ae211c87-5c58-403d-ac75-cc97da87af38
 # ╟─c79c43cf-ef87-41fe-b3aa-0928fc08ed2d
