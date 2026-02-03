@@ -813,7 +813,7 @@ Julia provides the `eigen(A :: Matrix)` function, which will perform the computa
 
 # ╔═╡ c6217195-f972-42fc-b289-a610b8f7e69a
 # Eigendecomposition of matrix into eigenvalues and eigenvectors 
-evals, evecs = eigen(A) 
+evals, evecs = eigen(A)
 
 # ╔═╡ c36b2c77-8ce9-4f2c-baca-12dfdced5222
 md"Eigenvalues:"
