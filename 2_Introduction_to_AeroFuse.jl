@@ -67,7 +67,7 @@ md"
 
 Here, we'll refer to a passenger jet (based on a Boeing 777), but you can modify it to your design specifications.
 
-![](https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/dc763bf2-302c-46be-8a52-4cb7c11598e5/d74vi3c-372cf93b-f4ad-4046-85e3-49f667d3c55a.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcL2RjNzYzYmYyLTMwMmMtNDZiZS04YTUyLTRjYjdjMTE1OThlNVwvZDc0dmkzYy0zNzJjZjkzYi1mNGFkLTQwNDYtODVlMy00OWY2NjdkM2M1NWEucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.bS5c5rkhqB2yoaOmIeRut7TgVsqgnPIfMOBSgYOO-TI)
+![](https://raw.githubusercontent.com/alfiyandyhr/Tutorial_for_MECH3620_Aircraft_Design_HKUST/main/figures/aircraft.png)
 
 "
 
@@ -155,16 +155,16 @@ end
 # Wing
 wing = Wing(
     foils       = [foil_w_r, foil_w_m, foil_w_t], # Airfoils (root to tip)
-    chords      = [14.0, 9.73, 1.43561],        # Chord lengths
-    spans       = [14.0, 46.9] / 2,             # Span lengths
-    dihedrals   = fill(6, 2),                   # Dihedral angles (deg)
-    sweeps      = fill(35.6, 2),                # Sweep angles (deg)
-    w_sweep     = 0.,                           # Leading-edge sweep
-    symmetry    = true,                         # Symmetry
+    chords      = [14.0, 9.73, 1.43561],          # Chord lengths
+    spans       = [14.0, 46.9] / 2,               # Span lengths
+    dihedrals   = fill(6, 2),                     # Dihedral angles (deg)
+    sweeps      = fill(35.6, 2),                  # Sweep angles (deg)
+    w_sweep     = 0.,                             # Leading-edge sweep
+    symmetry    = true,                           # Symmetry
 
 	# Orientation
-    angle       = 3,       # Incidence angle (deg)
-    axis        = [0, 1, 0], # Axis of rotation, x-axis
+    angle       = 3,       						  # Incidence angle (deg)
+    axis        = [0, 1, 0], 					  # Axis of rotation, x-axis
     position    = [0.35*fuse.length, 0., -2.5]
 )
 
@@ -231,8 +231,8 @@ wing_coo[1,3]
 # ╔═╡ 2b2388c4-8e89-47b9-b361-e1568945be50
 begin
 	# Example:
-	eng_L = wing_coo[1,2] - [1, 0., 0.] # Left engine, at mid-section leading edge
-	eng_R = wing_coo[1,4] - [1, 0., 0.] # Right engine, at mid-section leading edge
+	eng_L = wing_coo[1,2] - [1, 0., 0.] # Left engine, at the kink leading edge
+	eng_R = wing_coo[1,4] - [1, 0., 0.] # Right engine, at the kink leading edge
 end
 
 # ╔═╡ 56dbc2bc-4441-4e1f-9b88-d1457540ab68
@@ -262,12 +262,12 @@ htail = WingSection(
     dihedral    = 7.,   			# Dihedral angle (deg)
     sweep       = 35.,  			# Sweep angle (deg)
     w_sweep     = 0.,   			# Leading-edge sweep
-    root_foil   = con_foil, 	# Root airfoil
-	tip_foil    = con_foil, 	# Tip airfoil
+    root_foil   = con_foil, 		# Root airfoil
+	tip_foil    = con_foil, 		# Tip airfoil
     symmetry    = true,
 
     # Orientation
-    angle       = 5,  # Incidence angle (deg). HOW DO YOU DETERMINE THIS?
+    angle       = 5,  			# Incidence angle (deg). HOW DO YOU DETERMINE THIS?
     axis        = [0., 1., 0.], # Axis of rotation, y-axis
     position    = fuse_end - [ 10., 0., 0.], # HOW DO YOU DETERMINE THIS?
 )
