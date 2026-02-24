@@ -143,33 +143,33 @@ md"""## Constraints Analysis
 """
 
 # ╔═╡ b623cdb1-9395-4912-bb7d-031b8fe1ab7a
-md"From your initial weight estimation, you computed the fuel-weight fractions for your mission."
+md"From your initial weight estimation, you will get the segment weight fractions (SWFs) for your predefined mission."
 
 # ╔═╡ 7026ecc7-2965-458d-aad5-a7de0aba24a4
 begin
-	FF_takeoff = 0.99 	# Takeoff
-	FF_climb = 0.98 	# Climb
-	FF_cruise = 0.88 	# Cruise
-	FF_descent = 0.98 	# Descent
-	FF_holding = 0.95 	# Holding
-	FF_landing = 0.99 	# Landing
+	SWF_takeoff = 0.99 	# Takeoff
+	SWF_climb = 0.98 	# Climb
+	SWF_cruise = 0.88 	# Cruise
+	SWF_descent = 0.98 	# Descent
+	SWF_holding = 0.95 	# Holding
+	SWF_landing = 0.99 	# Landing
 
-	# Fuel fractions over the mission
-	FFs = [FF_takeoff, FF_climb, FF_cruise, FF_descent, FF_holding, FF_landing]
+	# Segment Weight Fractions over the mission
+	SWFs = [SWF_takeoff, SWF_climb, SWF_cruise, SWF_descent, SWF_holding, SWF_landing]
 end
 
 # ╔═╡ 96caef72-53b8-459d-98b9-e4d4b0817980
-md"By evaluating the cumulative product of the fuel fractions, you can evaluate the weight fractions over the each segment of the mission."
+md"By evaluating the cumulative product of the fuel fractions, you can evaluate the weight lapse rates (β) at each segment over the mission."
 
 # ╔═╡ 9317b57c-6cd2-42ad-9486-5087d4c5fbc1
-# Cumulative product for weight fractions over each mission segment
-WFs_mission = cumprod(FFs)
+# Cumulative product for segment weight fractions over each mission segment
+β_mission = cumprod(SWFs)
 
 # ╔═╡ 05132152-149c-48e0-b086-8d44c4fd8b37
-md"Now we assign each number in the array to the corresponding mission segment's weight fraction variable."
+md"Now we assign each number in the array to the corresponding mission segment's weight lapse rate β."
 
 # ╔═╡ bab01918-fb5f-46ea-84a5-5a5be7406dcd
-WF_takeoff, WF_climb, WF_cruise, WF_descent, WF_holding, WF_landing = WFs_mission
+β_takeoff, β_climb, β_cruise, β_descent, β_holding, β_landing = β_mission
 
 # ╔═╡ 5e39f510-08bd-4923-879d-0eeeb2a88432
 md"### Stall Speed
@@ -292,7 +292,7 @@ begin
 	s_L = 2800 		 # Runway length
 	s_a = 305 		 # Approach distance
 	r = 0.6 		 # FAR-25 condition
-	landing_sls = 1/WF_landing * landing_condition(σ, CL_landing, s_L, s_a, r)
+	landing_sls = 1/β_landing * landing_condition(σ, CL_landing, s_L, s_a, r)
 	WbS_landing = fill(landing_sls, n)
 end;
 
@@ -406,7 +406,7 @@ begin
 	G_takeoff 	 = 0.012
 	ΔCD0_takeoff = 0.035 # Flaps 5 deg, gear down
 	K_takeoff 	 = induced_drag_coefficient(e_5deg, AR)
-	WF_takeoff_climb = 0.99 * WF_takeoff # Takeoff climb weight fraction
+	WF_takeoff_climb = 0.99 * β_takeoff # Takeoff climb weight fraction
 	
 	TbW_takeoff_climb = thrust_corrected_climb(k_s_takeoff, CD0 + ΔCD0_takeoff, CL_max_climb, K_takeoff, G_takeoff, n_eng, WF_takeoff_climb, OEI = true)
 	
@@ -422,9 +422,9 @@ begin
 	G_trans 	= 0
 	ΔCD0_trans 	= 0.030 # Flaps 10 deg, gear up
 	K_climb 	= induced_drag_coefficient(e_10deg, AR)
-	WF_trans 	= 0.99 * WF_climb # Weight fraction at transition climb 
+	β_trans 	= 0.99 * β_climb # Weight fraction at transition climb 
 	
-	TbW_trans_climb = thrust_corrected_climb(k_s_trans, CD0 + ΔCD0_trans, CL_max_climb, K_climb, G_trans, n_eng, WF_trans, OEI = true)
+	TbW_trans_climb = thrust_corrected_climb(k_s_trans, CD0 + ΔCD0_trans, CL_max_climb, K_climb, G_trans, n_eng, β_trans, OEI = true)
 	
 	trans_climb = fill(TbW_trans_climb, length(wing_loadings))
 end;
@@ -438,9 +438,9 @@ begin
 	G_second 	= 0.024
 	ΔCD0_second = 0.01 # Flaps 5 deg, gear up
 	K_second 	= induced_drag_coefficient(e_5deg, AR)
-	WF_second   = 0.98 * WF_trans # Weight fraction at second climb
+	β_second   = 0.98 * β_trans # Weight fraction at second climb
 
-	TbW_second_climb = thrust_corrected_climb(k_s_second, CD0 + ΔCD0_second, CL_max_climb, K_second, G_second, n_eng, WF_second, OEI = true)
+	TbW_second_climb = thrust_corrected_climb(k_s_second, CD0 + ΔCD0_second, CL_max_climb, K_second, G_second, n_eng, β_second, OEI = true)
 	
 	second_climb = fill(TbW_second_climb, length(wing_loadings))
 end;
@@ -456,9 +456,9 @@ begin
 	G_enroute 	 = 0.012
 	ΔCD0_enroute = 0.0 # Clean, i.e. no flaps
 	K_enroute 	 = induced_drag_coefficient(e_0deg, AR)
-	WF_enroute 	 = 0.98 * WF_second # Weight fraction at enroute climb
+	β_enroute 	 = 0.98 * β_second # Weight fraction at enroute climb
 
-	TbW_enroute_climb = thrust_corrected_climb(k_s_enroute, CD0 + ΔCD0_enroute, CL_max_climb, K_enroute, G_enroute, n_eng, WF_enroute, MCT = true, OEI = true)
+	TbW_enroute_climb = thrust_corrected_climb(k_s_enroute, CD0 + ΔCD0_enroute, CL_max_climb, K_enroute, G_enroute, n_eng, β_enroute, MCT = true, OEI = true)
 	
 	enroute_climb = fill(TbW_enroute_climb, length(wing_loadings))
 end;
@@ -474,9 +474,9 @@ begin
 	G_balked_AEO    = 0.032
 	ΔCD0_balked_AEO = 0.030 # Flaps 10 deg, gear up
 	K_balked_AEO    = induced_drag_coefficient(e_10deg, AR)
-	WF_balked_AEO   = WF_landing # NEED TO CHECK
+	β_balked_AEO   = β_landing # NEED TO CHECK
 
-	TbW_balked_AEO = thrust_corrected_climb(k_s_enroute, CD0 + ΔCD0_balked_AEO, CL_max_climb, K_balked_AEO, G_balked_AEO, n_eng, WF_balked_AEO)
+	TbW_balked_AEO = thrust_corrected_climb(k_s_enroute, CD0 + ΔCD0_balked_AEO, CL_max_climb, K_balked_AEO, G_balked_AEO, n_eng, β_balked_AEO)
 	
 	balked_AEO_climb = fill(TbW_balked_AEO, length(wing_loadings))
 end;
@@ -490,9 +490,9 @@ begin
 	G_balked_OEI = 0.021
 	ΔCD0_balked_OEI = 0.030 # Flaps 10 deg, gear up
 	K_balked_OEI = induced_drag_coefficient(e_10deg, AR)
-	WF_balked_OEI = WF_landing # Maximum landing weight fraction
+	β_balked_OEI = β_landing # Maximum landing weight fraction
 
-	TbW_balked_OEI = thrust_corrected_climb(k_s_enroute, CD0 + ΔCD0_balked_OEI, CL_max_climb, K_balked_OEI, G_balked_OEI, n_eng, WF_balked_OEI, OEI = true)
+	TbW_balked_OEI = thrust_corrected_climb(k_s_enroute, CD0 + ΔCD0_balked_OEI, CL_max_climb, K_balked_OEI, G_balked_OEI, n_eng, β_balked_OEI, OEI = true)
 	
 	balked_OEI_climb = fill(TbW_balked_OEI, length(wing_loadings))
 end;
@@ -545,7 +545,7 @@ begin
 	a = 294.9 			# Speed of sound at 40,000 ft
 	q = dynamic_pressure(σ_cruise * 1.225, M * a)
 	K_cruise = induced_drag_coefficient(e_0deg, AR)
-	TbW_cruise = 1 / σ_cruise^0.6 * WF_cruise * cruise_condition.(wing_loadings, q, CD0, K_cruise)
+	TbW_cruise = 1 / σ_cruise^0.6 * β_cruise * cruise_condition.(wing_loadings, q, CD0, K_cruise)
 end;
 
 # ╔═╡ cc6694b9-7917-4031-a574-35e09ace7010
@@ -1889,6 +1889,6 @@ version = "1.4.1+2"
 # ╟─105341fb-332a-4875-891e-5a52d1a15fa2
 # ╟─c023e93b-7384-450a-9333-c8df482bda9f
 # ╠═15fe4433-cd16-451e-889a-1e69d7f4a040
-# ╠═8ace3bb0-6e73-4d1e-a7c3-4c840a830d34
+# ╟─8ace3bb0-6e73-4d1e-a7c3-4c840a830d34
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
