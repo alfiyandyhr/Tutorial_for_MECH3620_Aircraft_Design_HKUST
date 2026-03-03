@@ -716,9 +716,6 @@ md"
 The total weight saving due to a **5 %** composite empty-weight saving is **$(round(total_weight_saving; digits=2))%**
 "
 
-# ╔═╡ b3af1d80-71c0-4a72-a942-d35066b87e5c
-
-
 # ╔═╡ e7632467-e079-4073-aea6-4fdeee42f32d
 # Table of Contents
 begin
@@ -749,7 +746,7 @@ PlutoUI = "~0.7.23"
 PLUTO_MANIFEST_TOML_CONTENTS = """
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.12.4"
+julia_version = "1.12.5"
 manifest_format = "2.0"
 project_hash = "81a1ac7894b0ea68ff567c5b0df7a8e9073f52b6"
 
@@ -2014,7 +2011,6 @@ version = "1.4.1+2"
 # ╠═89befc48-b2a1-4f94-83d8-7afee54498c5
 # ╠═a8feca0a-95df-4d11-97a6-61f2b5a79397
 # ╟─a2861049-d1a6-45df-aa4e-9ad494487827
-# ╠═b3af1d80-71c0-4a72-a942-d35066b87e5c
 # ╟─e7632467-e079-4073-aea6-4fdeee42f32d
 # ╠═1aad12b5-1af0-4b60-8e9c-a43296f6cd29
 # ╟─00000000-0000-0000-0000-000000000001
