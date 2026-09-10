@@ -38,7 +38,7 @@ begin
 end
 
 # ╔═╡ 50f026a9-84f2-4152-a1f6-b3c55c84e8ea
-md"""# AeroFuse: Aircraft Design Demo
+md"""# AeroFuse: Aircraft Design Demo (with Aero Plots)
 """
 
 # ╔═╡ 47df8df1-3923-44a1-a19e-845246737b1e
@@ -1012,7 +1012,7 @@ PlutoUI = "~0.7.50"
 PLUTO_MANIFEST_TOML_CONTENTS = """
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.12.4"
+julia_version = "1.12.5"
 manifest_format = "2.0"
 project_hash = "b06fb2920842228243372844a41b328e3293ec51"
 
@@ -2677,7 +2677,7 @@ version = "1.4.1+2"
 """
 
 # ╔═╡ Cell order:
-# ╟─50f026a9-84f2-4152-a1f6-b3c55c84e8ea
+# ╠═50f026a9-84f2-4152-a1f6-b3c55c84e8ea
 # ╠═d3da7be0-aef5-4ea1-9655-00714ac25557
 # ╠═ef767260-419e-4029-b7cd-c202790668a5
 # ╠═6f7b9b78-02af-43f1-8f71-8da6f8ac9aea

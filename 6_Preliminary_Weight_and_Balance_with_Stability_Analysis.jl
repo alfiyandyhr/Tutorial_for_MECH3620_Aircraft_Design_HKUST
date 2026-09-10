@@ -906,7 +906,7 @@ x_{25\%~\text{MAC}} & = x_{\text{LE},\ \text{MAC}} + \bar{c} / 4, & \quad \text{
 """
 
 # ╔═╡ 402ead4c-b3e9-4153-baee-1048468e6080
-# The End.
+# The End (checked in Fall 2026)
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -927,7 +927,7 @@ PlutoUI = "~0.7.23"
 PLUTO_MANIFEST_TOML_CONTENTS = """
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.12.4"
+julia_version = "1.12.5"
 manifest_format = "2.0"
 project_hash = "a9031e841caef307038f0df8b29d1a5d0b6825fe"
 
